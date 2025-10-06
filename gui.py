@@ -1,10 +1,18 @@
 from tkinter import *
 from datetime import datetime
 from tkinter.ttk import Treeview, Scrollbar, Combobox
+import ctypes
+import platform
+
+if platform.system() == 'Windows':
+	try:
+		ctypes.windll.shcore.SetProcessDpiAwareness(1)
+	except:
+		pass
 
 root = Tk()
 root.title('test')
-root.geometry('650x550')
+root.geometry('650x500')
 root['bg'] = '#494D4E'
 
 def add_client_window():
@@ -70,6 +78,10 @@ def create_order_window():
 	count_entry.place(x=40, y=480)
 	plus_count = Button(window, text='+', bg='grey', font=('arial', 20, 'bold'), command=count_plus)
 	plus_count.place(x=200, y=480)
+	cancel = Button(window, text='Отмена', bg='grey', font=('arial', 20), command=window.destroy)
+	cancel.place(x=0, y=550)
+	add = Button(window, text='Добавить', bg='grey', font=('arial', 20))###
+	add.place(x=485, y=550)
 
 	#Список товаров(тестовая база)
 	data = [
@@ -162,11 +174,12 @@ def add_product_window():
 def sorting_window():
 	window = Toplevel(root)
 	window.title('test')
-	window.geometry('635x270')
+	window.geometry('635x180')
 	window['bg'] = '#494D4E'
 
 	data_label = Label(window, text='Выберите дату заказа', bg='#494D4E', fg='white', font=('arial', 15))
 	data_label.place(x=0, y=0)
+
 	data_day_options = [i for i in range(1, 32)]
 	data_day_options = ['День'] + data_day_options
 	data_day_entry = Combobox(window, values=data_day_options, state='readonly', width=6, font=('arial', 15))
@@ -183,6 +196,39 @@ def sorting_window():
 	data_year_entry.current(0)
 	data_year_entry.place(x=280, y=20)
 
+	time_label = Label(window, text='Временной диапазон', bg='#494D4E', fg='white', font=('arial', 15))
+	time_label.place(x=0, y=50)
+	time_h_options = [str(i).zfill(2) for i in range(0, 24)];
+	time_h_options = ['Час'] + time_h_options
+	time_h_from_entry = Combobox(window, values=time_h_options, state='readonly', width=5, font=('arial', 15))
+	time_h_from_entry.current(0)
+	time_h_from_entry.place(x=0, y=70)
+	split_label_from = Label(window, text=':', bg='#494D4E', fg='white', font=('arial', 15))
+	split_label_from.place(x=75, y=70)
+	time_m_options = [str(i).zfill(2) for i in range(0, 61)];
+	time_m_options = ['Минут'] + time_m_options
+	time_m_from_entry = Combobox(window, values=time_m_options, state='readonly', width=8, font=('arial', 15))
+	time_m_from_entry.current(0)
+	time_m_from_entry.place(x=90, y=70)
+	to_label = Label(window, text='-', bg='#494D4E', fg='white', font=('arial', 15))
+	to_label.place(x=200, y=70)
+	time_h_to_options = ['Час'] + time_h_options
+	time_h_to_entry = Combobox(window, values=time_h_options, state='readonly', width=5, font=('arial', 15))
+	time_h_to_entry.current(0)
+	time_h_to_entry.place(x=220, y=70)
+	split_label_from = Label(window, text=':', bg='#494D4E', fg='white', font=('arial', 15))
+	split_label_from.place(x=295, y=70)
+	time_m_ro_options = [str(i).zfill(2) for i in range(0, 61)];
+	time_m_ro_options = ['Минут'] + time_m_options
+	time_m_ro_entry = Combobox(window, values=time_m_options, state='readonly', width=8, font=('arial', 15))
+	time_m_ro_entry.current(0)
+	time_m_ro_entry.place(x=310, y=70)
+
+	cancel = Button(window, text='Отмена', bg='grey', font=('arial', 20), command=window.destroy)
+	cancel.place(x=0, y=130)
+	apply_sort = Button(window, text='Применить', bg='grey', font=('arial', 20))###
+	apply_sort.place(x=465, y=130)
+
 	
 
 #Базовый интерфейс
@@ -196,10 +242,17 @@ add_product = Button(root, text='Добавить товар', bg='grey', font=(
 add_product.place(x=0, y=50)
 statistic = Button(root, text='Статистика/анализ по магазину', bg='grey', font=('arial', 20))
 statistic.place(x=235, y=50)
+order_base_label = Label(root, text='Список заказов', bg='#494D4E', fg='white', font=('arial', 15))
+order_base_label.place(x=0, y=110)
 search = Button(root, text='Поиск', bg='grey', width=6, font=('arial', 20))
-search.place(x=540, y=110)
+search.place(x=540, y=130)
 search_entry = Entry(root, width=28, font=('arial', 26), fg='black')
-search_entry.place(x=0, y=110)
+search_entry.place(x=0, y=130)
+
+cancel = Button(root, text='Отмена', bg='grey', font=('arial', 20), command=root.destroy)
+cancel.place(x=0, y=450)
+add = Button(root, text='Добавить', bg='grey', font=('arial', 20))###
+add.place(x=500, y=450)
 
 #Список людей(тестовая база)
 data = [
@@ -207,7 +260,7 @@ data = [
 ('Друн Фоговоч Друнов', '+7123456789', 'bebra@gmail.com')#####################################
 ]
 frame = Frame(root, width=650, height=200)
-frame.place(x=0, y=170)
+frame.place(x=0, y=190)
 tree = Treeview(frame, columns=('ФИО', 'Телефон', 'Почта'), show='headings')
 tree.heading('ФИО', text='ФИО')
 tree.heading('Телефон', text='Телефон')

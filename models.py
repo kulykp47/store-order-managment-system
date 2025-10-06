@@ -1,3 +1,4 @@
+import datetime
 class Product:
 	def __init__(self, product_name, product_price, product_count, product_id):
 		super(Product, self).__init__()
@@ -32,4 +33,6 @@ class Order:
 		super(Order, self).__init__()
 		self.order_product = order_product
 		self.order_client = order_client
+		self.date = datetime.date.today()
+
 						
