@@ -2,36 +2,38 @@ import models
 import json
 import os
 
-#products
-folder_path = 'data'
-os.makedirs(folder_path, exist_ok=True)
-file_path = os.path.join(folder_path, 'products.json')
+products = []
+clients = []
 
-products = [
-	models.Product('Phone', 10000, 6, 1)
-]
+def import_base():
+	global products, clients
+	#products
+	products_path = os.path.join('data', 'products.json')
+	if os.path.exists(products_path):
+		with open(products_path, 'r', encoding='utf-8') as file:
+			loaded_data = json.load(file)
+		products = [models.Product.from_dict(d) for d in loaded_data]
+	else:
+		products = []
 
-with open(file_path, 'w', encoding='utf-8') as file:
-	json.dump([p.to_dict() for p in products], file, ensure_ascii=False, indent=4)
+	#clients
+	clients_path = os.path.join('data', 'clients.json')
+	if os.path.exists(clients_path):
+		with open(clients_path, 'r', encoding='utf-8') as file:
+			loaded_data = json.load(file)
+		clients = [models.Client.from_dict(d) for d in loaded_data]
+	else:
+		clients = []
 
-with open(file_path, 'r', encoding='utf-8') as file:
-	loaded_data = json.load(file)
-	loaded_products = [models.Product.from_dict(d) for d in loaded_data]
+def export_base():
+	global products, clients
+	folder_path = 'data'
+	os.makedirs(folder_path, exist_ok=True)
 
-#clients
-folder_path = 'data'
-os.makedirs(folder_path, exist_ok=True)
-file_path = os.path.join(folder_path, 'clients.json')
+	products_path = os.path.join(folder_path, 'products.json')
+	with open(products_path, 'w', encoding='utf-8') as file:
+		json.dump([p.to_dict() for p in products], file, ensure_ascii=False, indent=4)
 
-clients = [
-	models.Client('John Doe', '+1123456', 'mail@gmail.com'),
-	models.Client('John Doe111', '+11234561111', 'mail@gmail.com11111'),
-]
-
-with open(file_path, 'w', encoding='utf-8') as file:
-	json.dump([p.to_dict() for p in clients], file, ensure_ascii=False, indent=4)
-
-with open(file_path, 'r', encoding='utf-8') as file:
-	loaded_data = json.load(file)
-	loaded_products = [models.Client.from_dict(d) for d in loaded_data]
-
+	clients_path = os.path.join(folder_path, 'clients.json')
+	with open(clients_path, 'w', encoding='utf-8') as file:
+		json.dump([p.to_dict() for p in clients], file, ensure_ascii=False, indent=4)

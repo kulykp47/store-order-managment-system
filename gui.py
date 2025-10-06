@@ -1,3 +1,5 @@
+import models
+import db
 from tkinter import *
 from datetime import datetime
 from tkinter.ttk import Treeview, Scrollbar, Combobox
@@ -10,16 +12,31 @@ if platform.system() == 'Windows':
 	except:
 		pass
 
+db.import_base()
+
+try:
+	last_id = db.products[-1].product_id
+except:
+	last_id = 0
+
 root = Tk()
 root.title('test')
 root.geometry('650x500')
 root['bg'] = '#494D4E'
+
+def save_changes():
+	db.export_base()
+	root.destroy()
 
 def add_client_window():
 	window = Toplevel(root)
 	window.title('test')
 	window.geometry('635x270')
 	window['bg'] = '#494D4E'
+
+	def add_client():
+		db.clients.append(models.Client(fio_entry.get(), phone_entry.get(), email_entry.get()))
+		window.destroy()
 
 	fio_label = Label(window, text='ФИО', bg='#494D4E', fg='white', font=('arial', 15))
 	fio_label.place(x=0, y=0)
@@ -35,7 +52,7 @@ def add_client_window():
 	email_entry.place(x=0, y=160)
 	cancel = Button(window, text='Отмена', bg='grey', font=('arial', 20), command=window.destroy)
 	cancel.place(x=0, y=220)
-	add = Button(window, text='Добавить', bg='grey', font=('arial', 20))###
+	add = Button(window, text='Добавить', bg='grey', font=('arial', 20), command=add_client)###
 	add.place(x=485, y=220)
 
 def create_order_window():
@@ -155,6 +172,12 @@ def add_product_window():
 	window.geometry('635x270')
 	window['bg'] = '#494D4E'
 
+	def add_product():
+		global last_id
+		db.products.append(models.Product(product_name_entry.get(), product_price_entry.get(), product_count_entry.get(), last_id+1))
+		last_id += 1
+		window.destroy()
+
 	product_name_label = Label(window, text='Наименование товара', bg='#494D4E', fg='white', font=('arial', 15))
 	product_name_label.place(x=0, y=0)
 	product_name_entry = Entry(window, width=33, font=('arial', 26))
@@ -169,7 +192,7 @@ def add_product_window():
 	product_count_entry.place(x=0, y=160)
 	cancel = Button(window, text='Отмена', bg='grey', font=('arial', 20), command=window.destroy)
 	cancel.place(x=0, y=220)
-	add = Button(window, text='Добавить', bg='grey', font=('arial', 20))###
+	add = Button(window, text='Добавить', bg='grey', font=('arial', 20), command=add_product)###
 	add.place(x=485, y=220)
 def sorting_window():
 	window = Toplevel(root)
@@ -251,8 +274,8 @@ search_entry.place(x=0, y=130)
 
 cancel = Button(root, text='Отмена', bg='grey', font=('arial', 20), command=root.destroy)
 cancel.place(x=0, y=450)
-add = Button(root, text='Добавить', bg='grey', font=('arial', 20))###
-add.place(x=500, y=450)
+save = Button(root, text='Сохранить', bg='grey', font=('arial', 20), command=save_changes)###
+save.place(x=500, y=450)
 
 #Список людей(тестовая база)
 data = [
