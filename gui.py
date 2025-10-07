@@ -20,7 +20,7 @@ except:
 	last_id = 0
 
 root = Tk()
-root.title('test')
+root.title('Управление магазином')
 root.geometry('650x500')
 root['bg'] = '#494D4E'
 
@@ -30,7 +30,7 @@ def save_changes():
 
 def add_client_window():
 	window = Toplevel(root)
-	window.title('test')
+	window.title('Добавить клиента')
 	window.geometry('635x270')
 	window['bg'] = '#494D4E'
 
@@ -57,7 +57,7 @@ def add_client_window():
 
 def create_order_window():
 	window = Toplevel(root)
-	window.title('test')
+	window.title('Создать заказ')
 	window.geometry('635x600')
 	window['bg'] = '#494D4E'
 	count = StringVar()
@@ -101,34 +101,26 @@ def create_order_window():
 	add.place(x=485, y=550)
 
 	#Список товаров(тестовая база)
-	data = [
-	('1', 'Тетрадь 96', '200', '17'),###########################
-	('2', 'Ручка', '100', '215'),
-	('3', 'Карандаш', '50', '200')
-	]
 	frame_product = Frame(window, width=635, height=150)
 	frame_product.place(x=0, y=70)
 	frame_product.pack_propagate(False)
-	tree_product = Treeview(frame_product, columns=('id','Наименование', 'Цена', 'Кол-во'), show='headings')
-	tree_product.heading('id', text='id')
+	tree_product = Treeview(frame_product, columns=('Наименование', 'Цена', 'Кол-во', 'id'), show='headings')
 	tree_product.heading('Наименование', text='Наименование')
 	tree_product.heading('Цена', text='Цена')
 	tree_product.heading('Кол-во', text='Кол-во')
-	tree_product.column('id', width=75)
+	tree_product.heading('id', text='id')
 	tree_product.column('Наименование', width=340)
 	tree_product.column('Цена', width=100)
 	tree_product.column('Кол-во', width=100)
-	for product in data:
-		tree_product.insert('', 'end', values=product)
+	tree_product.column('id', width=75)
+	for product in db.products:
+		tree_product.insert('', 'end', values=models.Product.unpack(product))
 	scrollbar_product = Scrollbar(frame_product, orient='vertical', command=tree_product.yview)
 	tree_product.configure(yscrollcommand=scrollbar_product.set)
 	tree_product.pack(side='left', fill='both', expand=True)
 	scrollbar_product.pack(side='right', fill='y')
+
 	#Список заказчиков(тестовая база)
-	data = [
-	('Иванов Иван Иванович', '+79595881212', 'ivanov@gmail.com'),
-	('Друн Фоговоч Друнов', '+7123456789', 'bebra@gmail.com'),
-	]
 	frame_people = Frame(window, width=635, height=150)
 	frame_people.place(x=0, y=300)
 	frame_people.pack_propagate(False)
@@ -139,8 +131,8 @@ def create_order_window():
 	tree_people.column('ФИО', width=205)
 	tree_people.column('Телефон', width=205)
 	tree_people.column('Почта', width=205)
-	for person in data:
-		tree_people.insert('', 'end', values=person)
+	for person in db.clients:
+		tree_people.insert('', 'end', values=models.Client.unpack(person))
 	scrollbar_people = Scrollbar(frame_people, orient='vertical', command=tree_people.yview)
 	tree_people.configure(yscrollcommand=scrollbar_people.set)
 	tree_people.pack(side='left', fill='both', expand=True)
@@ -168,7 +160,7 @@ def create_order_window():
 	tree_product.heading('Кол-во', text='Кол-во', command=lambda: sort_column(tree_product, 'Кол-во', False))
 def add_product_window():
 	window = Toplevel(root)
-	window.title('test')
+	window.title('Добавить товар')
 	window.geometry('635x270')
 	window['bg'] = '#494D4E'
 
@@ -196,7 +188,7 @@ def add_product_window():
 	add.place(x=485, y=220)
 def sorting_window():
 	window = Toplevel(root)
-	window.title('test')
+	window.title('Сортировка')
 	window.geometry('635x180')
 	window['bg'] = '#494D4E'
 
@@ -252,7 +244,56 @@ def sorting_window():
 	apply_sort = Button(window, text='Применить', bg='grey', font=('arial', 20))###
 	apply_sort.place(x=465, y=130)
 
-	
+
+
+def count_check_button():
+	window = Toplevel(root)
+	window.title('Остатки товаров')
+	window.geometry('635x250')
+	window['bg'] = '#494D4E'
+
+	search = Button(window, text='Поиск', bg='grey', width=6, font=('arial', 20))
+	search.place(x=520, y=0)
+	search_entry = Entry(window, width=27, font=('arial', 26), fg='black')
+	search_entry.place(x=0, y=0)
+
+	frame_product = Frame(window, width=635, height=150)
+	frame_product.place(x=0, y=50)
+	frame_product.pack_propagate(False)
+	tree_product = Treeview(frame_product, columns=('Наименование', 'Цена', 'Кол-во', 'id'), show='headings')
+	tree_product.heading('Наименование', text='Наименование')
+	tree_product.heading('Цена', text='Цена')
+	tree_product.heading('Кол-во', text='Кол-во')
+	tree_product.heading('id', text='id')
+	tree_product.column('Наименование', width=340)
+	tree_product.column('Цена', width=100)
+	tree_product.column('Кол-во', width=100)
+	tree_product.column('id', width=75)
+	for product in db.products:
+		tree_product.insert('', 'end', values=models.Product.unpack(product))
+	scrollbar_product = Scrollbar(frame_product, orient='vertical', command=tree_product.yview)
+	tree_product.configure(yscrollcommand=scrollbar_product.set)
+	tree_product.pack(side='left', fill='both', expand=True)
+	scrollbar_product.pack(side='right', fill='y')
+
+	def sort_column(tv, col, reverse):
+		def try_num(value):
+			try:
+				return int(value)
+			except ValueError:
+				return value
+		items = [(try_num(tv.set(k, col)), k) for k in tv.get_children('')]
+		items.sort(reverse=reverse)
+		for index, (val, k) in enumerate(items):
+			tv.move(k, '', index)
+		tv.heading(col, command=lambda: sort_column(tv, col, not reverse))
+
+	tree_product.heading('id', text='id', command=lambda: sort_column(tree_product, 'id', False))
+	tree_product.heading('Наименование', text='Наименование', command=lambda: sort_column(tree_product, 'Наименование', False))
+	tree_product.heading('Цена', text='Цена', command=lambda: sort_column(tree_product, 'Цена', False))
+	tree_product.heading('Кол-во', text='Кол-во', command=lambda: sort_column(tree_product, 'Кол-во', False))
+
+
 
 #Базовый интерфейс
 add_client = Button(root, text='Добавить клиента', bg='grey', font=('arial', 20), command=add_client_window)###
@@ -263,8 +304,10 @@ sorting = Button(root, text='Сортировка', bg='grey', font=('arial', 20
 sorting.place(x=477, y=0)
 add_product = Button(root, text='Добавить товар', bg='grey', font=('arial', 20), command=add_product_window)###
 add_product.place(x=0, y=50)
-statistic = Button(root, text='Статистика/анализ по магазину', bg='grey', font=('arial', 20))
+statistic = Button(root, text='Статистика', bg='grey', font=('arial', 20))
 statistic.place(x=235, y=50)
+count_check = Button(root, text='Остатки товаров', bg='grey', font=('arial', 20), command=count_check_button)
+count_check.place(x=415, y=50)
 order_base_label = Label(root, text='Список заказов', bg='#494D4E', fg='white', font=('arial', 15))
 order_base_label.place(x=0, y=110)
 search = Button(root, text='Поиск', bg='grey', width=6, font=('arial', 20))

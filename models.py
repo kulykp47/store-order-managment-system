@@ -14,6 +14,9 @@ class Product:
 	def from_dict(data):
 		return Product(data['product_name'], data['product_price'], data['product_count'], data['product_id'])
 
+	def unpack(data):
+		return [data.product_name, data.product_price, data.product_count, data.product_id]
+
 class Client:
 	def __init__(self, client_fio, client_phone, client_email):
 		super(Client, self).__init__()
@@ -27,6 +30,9 @@ class Client:
 	@staticmethod
 	def from_dict(data):
 		return Client(data['client_fio'], data['client_phone'], data['client_email'])
+
+	def unpack(data):
+		return [data.client_fio, data.client_phone, data.client_email]
 
 class Order:
 	def __init__(self, order_product, order_client):
