@@ -73,19 +73,59 @@ def create_order_window():
 		new += 1
 		count.set(str(new))
 
+	def product_search():
+		search_data = (product_name_entry.get()).lower()
+		for i in tree_product.get_children():
+			tree_product.delete(i)
+		if '$:' in search_data:
+			for product in db.products:
+				if search_data[2:] in product.product_price:
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		if '#:' in search_data:
+			for product in db.products:
+				if search_data[2:] in product.product_count:
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		if search_data.isdigit():
+			for product in db.products:
+				if search_data in str(product.product_id):
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		else:
+			for product in db.products:
+				if search_data in (product.product_name).lower():
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+
+	def people_search():
+		search_data = (people_entry.get()).lower()
+		for i in tree_people.get_children():
+			tree_people.delete(i)
+		if '+:' in search_data:
+			for person in db.clients:
+				if search_data[2:] in person.client_phone:
+					tree_people.insert('', 'end', values=models.Client.unpack(person))
+		if '@:' in search_data:
+			for person in db.clients:
+				if search_data[2:] in (person.client_email).lower():
+					tree_people.insert('', 'end', values=models.Client.unpack(person))
+		else:
+			for person in db.clients:
+				if search_data in (person.client_fio).lower():
+					tree_people.insert('', 'end', values=models.Client.unpack(person))
+
+
+
 
 	#Базовый интерфейс
 	product_name_label = Label(window, text='Наименование товара', bg='#494D4E', fg='white', font=('arial', 15))
 	product_name_label.place(x=0, y=0)
 	product_name_entry = Entry(window, width=28, font=('arial', 26))
 	product_name_entry.place(x=0, y=20)
-	search_product = Button(window, text='Поиск', bg='grey', font=('arial', 20))
+	search_product = Button(window, text='Поиск', bg='grey', font=('arial', 20), command=product_search)
 	search_product.place(x=530, y=20)
 	people_label = Label(window, text='Заказчик', bg='#494D4E', fg='white', font=('arial', 15))
 	people_label.place(x=0, y=225)
 	people_entry = Entry(window, width=28, font=('arial', 26))
 	people_entry.place(x=0, y=250)
-	search_people = Button(window, text='Поиск', bg='grey', font=('arial', 20))
+	search_people = Button(window, text='Поиск', bg='grey', font=('arial', 20), command=people_search)
 	search_people.place(x=530, y=250)
 	count_label = Label(window, text='Кол-во', bg='#494D4E', fg='white', font=('arial', 15))
 	count_label.place(x=0, y=455)
@@ -220,7 +260,7 @@ def sorting_window():
 	time_h_from_entry.place(x=0, y=70)
 	split_label_from = Label(window, text=':', bg='#494D4E', fg='white', font=('arial', 15))
 	split_label_from.place(x=75, y=70)
-	time_m_options = [str(i).zfill(2) for i in range(0, 61)];
+	time_m_options = [str(i).zfill(2) for i in range(0, 60)];
 	time_m_options = ['Минут'] + time_m_options
 	time_m_from_entry = Combobox(window, values=time_m_options, state='readonly', width=8, font=('arial', 15))
 	time_m_from_entry.current(0)
@@ -239,8 +279,19 @@ def sorting_window():
 	time_m_ro_entry.current(0)
 	time_m_ro_entry.place(x=310, y=70)
 
+	def reset_combobox():
+		data_day_entry.current(0)
+		data_month_entry.current(0)
+		data_year_entry.current(0)
+		time_h_from_entry.current(0)
+		time_m_from_entry.current(0)
+		time_h_to_entry.current(0)
+		time_m_ro_entry.current(0)
+
 	cancel = Button(window, text='Отмена', bg='grey', font=('arial', 20), command=window.destroy)
 	cancel.place(x=0, y=130)
+	reset = Button(window, text='Сброс', bg='grey', font=('arial', 20), command=reset_combobox)
+	reset.place(x=350, y=130)
 	apply_sort = Button(window, text='Применить', bg='grey', font=('arial', 20))###
 	apply_sort.place(x=465, y=130)
 
@@ -252,7 +303,29 @@ def count_check_button():
 	window.geometry('635x250')
 	window['bg'] = '#494D4E'
 
-	search = Button(window, text='Поиск', bg='grey', width=6, font=('arial', 20))
+	def product_search():
+		search_data = (search_entry.get()).lower()
+		for i in tree_product.get_children():
+			tree_product.delete(i)
+		if '$:' in search_data:
+			for product in db.products:
+				if search_data[2:] in product.product_price:
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		if '#:' in search_data:
+			for product in db.products:
+				if search_data[2:] in product.product_count:
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		if search_data.isdigit():
+			for product in db.products:
+				if search_data in str(product.product_id):
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+		else:
+			for product in db.products:
+				if search_data in (product.product_name).lower():
+					tree_product.insert('', 'end', values=models.Product.unpack(product))
+
+
+	search = Button(window, text='Поиск', bg='grey', width=6, font=('arial', 20), command=product_search)
 	search.place(x=520, y=0)
 	search_entry = Entry(window, width=27, font=('arial', 26), fg='black')
 	search_entry.place(x=0, y=0)
@@ -318,7 +391,7 @@ search_entry.place(x=0, y=130)
 cancel = Button(root, text='Отмена', bg='grey', font=('arial', 20), command=root.destroy)
 cancel.place(x=0, y=450)
 save = Button(root, text='Сохранить', bg='grey', font=('arial', 20), command=save_changes)###
-save.place(x=500, y=450)
+save.place(x=490, y=450)
 
 #Список людей(тестовая база)
 data = [
