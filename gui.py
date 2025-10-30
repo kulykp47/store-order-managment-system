@@ -7,6 +7,9 @@ import datetime
 import re
 import analysis
 
+if __name__ == "__main__":
+    root.mainloop()
+
 db.import_base()
 
 try:
