@@ -582,8 +582,8 @@ def sorting_window():
 	data_month_entry = StringVar(window)
 	data_month_entry.set(data_month_options[0])
 
-	time_h_from_entry.set(hour_options[0])
 	time_h_from_entry = StringVar(window)
+	time_h_from_entry.set(hour_options[0])
 
 	time_m_from_entry = StringVar(window)
 	time_m_from_entry.set(minute_options[0])
