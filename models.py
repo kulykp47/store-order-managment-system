@@ -38,12 +38,12 @@ class Client:
 class Order:
 	def __init__(self, order_product, order_client, order_count, date_time=None):
 		super(Order, self).__init__()
-		self.order_product = order_product # Product object
-		self.order_client = order_client # Client object
+		self.order_product = order_product
+		self.order_client = order_client
 		self.order_count = order_count
 		if date_time is None:
 			now = datetime.datetime.now()
-			self.date_time = now.strftime("%d.%m.%Y %H:%M") # день.месяц.год час:минута
+			self.date_time = now.strftime("%d.%m.%Y %H:%M")
 		else:
 			self.date_time = date_time
 	
